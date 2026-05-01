@@ -137,3 +137,9 @@ body {
     height: 80px;
   }
 }
+@media (max-width: 380px) {
+  h1 {
+    font-size: 25px !important;
+    line-height: 1.2;
+  }
+}

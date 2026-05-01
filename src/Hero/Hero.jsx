@@ -221,7 +221,7 @@ export default function Hero() {
     (idx) => {
       if (isAnimating || idx === current) return;
       setIsAnimating(true);
-      // ✅ Card hide karo jab bhi slide change ho
+    
       setCardVisible(false);
       setPrevIdx(current);
 
@@ -253,14 +253,14 @@ export default function Hero() {
     goToSlide((current - 1 + slides.length) % slides.length);
   }, [current, goToSlide]);
 
-  // Autoplay
+  
   useEffect(() => {
     clearInterval(timerRef.current);
     timerRef.current = setInterval(nextSlide, AUTO_PLAY_DURATION);
     return () => clearInterval(timerRef.current);
   }, [nextSlide]);
 
-  // Animate on slide change
+  
   useEffect(() => {
     animateLetters();
     animateProgress();
@@ -302,7 +302,7 @@ export default function Hero() {
       key={i}
       className="absolute"
       style={{ left: hotspot?.x, top: hotspot?.y }}
-      //onMouseEnter={() => setCardVisible(true)}
+      
       onMouseEnter={() => setActiveHotspot(i)}
       onMouseLeave={() => setActiveHotspot(null)}
       onClick={() => setActiveHotspot(activeHotspot === i ? null : i)} // ✅ mobile support
@@ -350,12 +350,7 @@ export default function Hero() {
           <p className="text-xs text-gray-500 mt-1 text-center">
             {hotspot?.product?.price}
           </p>
-          {/*<button
-            className="hero-card-btn mx-10 w-43  text-xs rounded-full text-white font-medium flex flex-wrap items-center justify-center transition-colors duration-200"
-            style={{ background: "royalblue" }}
-          >
-            Add to Cart
-          </button>*/}
+          
           <button
             className="hero-card-btn px-3 py-2 w-full   text-xs rounded-lg text-white font-medium text-center wrap-break-word  flex flex-wrap items-center justify-center transition-colors duration-200"
             style={{ background: "royalblue" }}
@@ -383,7 +378,7 @@ export default function Hero() {
         {/* Title */}
         <h1
           ref={titleRef}
-          className="font-display text-3xl lg:text-7xl sm:text-4xl md:text-6xl font-semibold leading-tight mb-6"
+          className="font-display text-3xl lg:text-7xl sm:text-4xl md:text-6xl font-semibold leading-tight mb-6 flex flex-wrap"
           style={{ perspective: "600px", color:"royalblue" }}
         >
           {splitTitle(slides[current].title)}
@@ -458,165 +453,3 @@ export default function Hero() {
     </div>
   );
 }
-
-
-
-
-
-
-
-/////////////////////////////////////////////////
-
-
-
-/*import { useEffect, useRef, useState, useCallback } from "react";
-import gsap from "gsap";
-import "./Hero.css";
-
-const slides = [
-  {
-    id: 1,
-    bg: "https://png.pngtree.com/thumb_back/fh260/background/20251120/pngtree-empty-supermarket-aisle-with-shopping-carts-and-produce-display-inside-image_20490922.webp",
-    title: "Organic Grocery",
-    desc: "Organic grocery refers to food products grown and produced without synthetic pesticides, chemicals, or genetically modified organisms (GMOs).",
-    hotspots: [
-      {
-        x: "62%", y: "45%",
-        product: {
-          name: "Organic Flour",
-          price: "£18.00 – £20.00",
-          tag: "SALE!",
-          img: "https://onedegreeorganics.com/wp-content/uploads/2017/02/ODO_SourdoughBread_Blog_KhorasanFlour.jpg"
-        }
-      },
-      {
-        x: "40%", y: "80%",
-        product: {
-          name: "Organic Facial Kit",
-          price: "£28.00 – £30.00",
-          tag: "SALE!",
-          img: "https://img.drz.lazcdn.com/static/pk/p/b07da4f21910019d342a73ee0765e365.jpg"
-        }
-      }
-    ]
-  },
-];
-
-const AUTO_PLAY_DURATION = 4000;
-
-export default function Hero() {
-  const [current, setCurrent] = useState(0);
-  const [activeHotspot, setActiveHotspot] = useState(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const titleRef = useRef(null);
-  const descRef = useRef(null);
-  const btnsRef = useRef(null);
-  const progressRef = useRef(null);
-  const timerRef = useRef(null);
-  const slideRefs = useRef([]);
-
-  const animateLetters = useCallback(() => {
-    if (!titleRef.current) return;
-    const letters = titleRef.current.querySelectorAll(".letter");
-
-    gsap.fromTo(letters,
-      { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, stagger: 0.03, duration: 0.5 }
-    );
-
-    gsap.fromTo(descRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, delay: 0.4 }
-    );
-
-    gsap.fromTo(btnsRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, delay: 0.6 }
-    );
-  }, []);
-
-  const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-  }, []);
-
-  useEffect(() => {
-    timerRef.current = setInterval(nextSlide, AUTO_PLAY_DURATION);
-    return () => clearInterval(timerRef.current);
-  }, [nextSlide]);
-
-  useEffect(() => {
-    animateLetters();
-  }, [current, animateLetters]);
-
-  const splitTitle = (text) =>
-    text.split("").map((ch, i) => (
-      <span key={i} className="letter">
-        {ch === " " ? "\u00A0" : ch}
-      </span>
-    ));
-
-  return (
-    <div className="parent relative w-screen h-screen overflow-hidden bg-black select-none px-4 sm:px-8 md:px-16">
-
-      {slides.map((slide, idx) => (
-        <div
-          key={slide.id}
-          ref={(el) => (slideRefs.current[idx] = el)}
-          className="absolute inset-0"
-          style={{ opacity: idx === current ? 1 : 0 }}
-        >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.bg})` }}
-          />
-          <div className="slide-overlay absolute inset-0" />
-
-          {idx === current &&
-            slide.hotspots.map((hotspot, i) => (
-              <div
-                key={i}
-                className="absolute"
-                style={{ left: hotspot.x, top: hotspot.y }}
-                onMouseEnter={() => setActiveHotspot(i)}
-                onMouseLeave={() => setActiveHotspot(null)}
-                onClick={() =>
-                  setActiveHotspot(activeHotspot === i ? null : i)
-                }
-              >
-                <button className="hotspot-btn">+</button>
-
-                <div
-                  className={`product-card-popup ${activeHotspot === i ? "visible" : ""
-                    }`}
-                >
-                  <img src={hotspot.product.img} alt="" />
-                  <p>{hotspot.product.name}</p>
-                  <span>{hotspot.product.price}</span>
-                  <button className="hero-card-btn">Add to Cart</button>
-                </div>
-              </div>
-            ))}
-        </div>
-      ))}
-
-      <div className="relative z-10 flex flex-col justify-center h-full max-w-3xl">
-        <h1
-          ref={titleRef}
-          className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl text-blue-500"
-        >
-          {splitTitle(slides[current].title)}
-        </h1>
-
-        <p ref={descRef} className="text-white/70 mt-4">
-          {slides[current].desc}
-        </p>
-
-        <div ref={btnsRef} className="flex flex-wrap gap-3 mt-4">
-          <button className="btn-shop">Shop Now</button>
-          <button className="contact-btn">Contact</button>
-        </div>
-      </div>
-    </div>
-  );
-}*/
