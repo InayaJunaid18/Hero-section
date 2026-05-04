@@ -274,7 +274,7 @@ export default function Hero() {
     ));
 
   return (
-    <div className="parent relative w-screen h-screen overflow-hidden bg-black select-none ">
+    <div className="parent relative w-screen h-screen bg-black select-none ">
       {/* Slides */}
       {slides.map((slide, idx) => (
         <div
